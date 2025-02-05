@@ -28,7 +28,7 @@ export const ConfirmRemoveModal = ({
       mutationFn: removeSeminar,
       onSuccess() {
         console.log("removeSeminarMutation success");
-        queryClient.invalidateQueries({ queryKey: ["seminares"] });
+        queryClient.invalidateQueries({ queryKey: ["seminars"] });
       },
       onError(err) {
         console.log("removeSeminarMutation error", err);

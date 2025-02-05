@@ -23,6 +23,7 @@ interface EditModal {
 
 interface FormTypes {
   title: string;
+  description: string;
 }
 
 const testRules = {
@@ -31,6 +32,8 @@ const testRules = {
 
 export const EditModal = ({ open, handleClose, row }: EditModal) => {
   const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  console.log("row", row);
 
   const handleOnTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -38,12 +41,20 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
     setTitle(value);
   };
 
+  const handleOnDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value } = event.target;
+    setValue("description", value);
+    setDescription(value);
+  };
+
   const editSeminarMutation = useMutation(
     {
       mutationFn: editSeminar,
       onSuccess() {
         console.log("editSeminarMutation success");
-        queryClient.invalidateQueries({ queryKey: ["seminares"] });
+        queryClient.invalidateQueries({ queryKey: ["seminars"] });
         handleClose();
       },
       onError(err) {
@@ -55,6 +66,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
 
   const resetForm = () => {
     setValue("title", "");
+    setValue("description", "");
     reset();
     clearErrors();
   };
@@ -84,7 +96,9 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
   useEffect(() => {
     if (row) {
       setTitle(row.title);
+      setDescription(row.description);
       setValue("title", row.title);
+      setValue("description", row.description);
     }
   }, [row]);
 
@@ -126,6 +140,22 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                     error={errors.title ? true : false}
                     helperText={errors.title?.message}
                     label="Title"
+                  />
+                )}
+              />
+            </FormControl>
+            <FormControl fullWidth>
+              <Controller
+                name="description"
+                control={control}
+                rules={testRules}
+                render={() => (
+                  <TextField
+                    value={description}
+                    onChange={handleOnDescriptionChange}
+                    error={errors.description ? true : false}
+                    helperText={errors.description?.message}
+                    label="Description"
                   />
                 )}
               />

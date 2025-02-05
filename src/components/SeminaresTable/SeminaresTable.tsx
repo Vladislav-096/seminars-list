@@ -24,7 +24,7 @@ export const SeminaresTable = () => {
   const getSeminaresQuery = useQuery(
     {
       queryFn: () => getSeminares(),
-      queryKey: ["seminares"],
+      queryKey: ["seminars"],
       retry: false,
     },
     queryClient
