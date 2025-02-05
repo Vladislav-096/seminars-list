@@ -44,3 +44,21 @@ export const removeSeminar = async (id: string) => {
       throw err;
     });
 };
+
+interface editSeminar {
+  id: string;
+  data: Partial<Seminar>;
+}
+
+export const editSeminar = async ({ id, data }: editSeminar) => {
+  return fetch(`${API_URL}/seminars/${id}`, {
+    method: "PATCH",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then(validateResponse)
+    .catch((err) => {
+      console.log("editSeminar function error", err);
+      throw err;
+    });
+};

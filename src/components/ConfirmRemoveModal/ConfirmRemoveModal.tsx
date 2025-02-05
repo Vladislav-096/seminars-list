@@ -7,9 +7,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { modalContentStyles } from "../../constants/modalContentStyles";
+import { modalContentStyles } from "../../constants/constants";
 import { useMutation } from "@tanstack/react-query";
-import { removeSeminar } from "../../api/seminares";
+import { removeSeminar } from "../../api/seminars";
 import { queryClient } from "../../api/queryClient";
 
 interface ConfirmRemoveModal {
@@ -58,7 +58,7 @@ export const ConfirmRemoveModal = ({
             component="h2"
             sx={{ fontFamily: '"Play"', color: "#f0f6fc" }}
           >
-            Are you sure you'd like to remove the semonar?
+            Are you sure you'd like to remove the seminar?
           </Typography>
           <Stack spacing={2} direction="row">
             <Button

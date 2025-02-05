@@ -1,19 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../api/queryClient";
-import { getSeminares, Seminar, Seminars } from "../../api/seminares";
+import { getSeminares, Seminar, Seminars } from "../../api/seminars";
 import { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button, Paper } from "@mui/material";
 import { ConfirmRemoveModal } from "../ConfirmRemoveModal/ConfirmRemoveModal";
+import { EditModal } from "../EditModal/EditModal";
+import { initialRowData } from "../../constants/constants";
 
 export const SeminaresTable = () => {
   const [seminars, setSeminars] = useState<Seminars>([]);
   const [openConfirmRemoveModal, setOpenConfirmRemoveModal] =
     useState<boolean>(false);
+  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [idToRemoveSeminar, setIdToRemoveSeminar] = useState<string>("");
+  const [seminarToEdit, setSeminarToEdit] = useState<Seminar>(initialRowData);
 
   const handleOpenConfirmRemoveModal = () => setOpenConfirmRemoveModal(true);
   const handleCloseConfirmRemoveModal = () => setOpenConfirmRemoveModal(false);
+  const handleOpenEditModal = () => setOpenEditModal(true);
+  const handleCloseEditModal = () => setOpenEditModal(false);
 
   const getSeminaresQuery = useQuery(
     {
@@ -58,20 +64,23 @@ export const SeminaresTable = () => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 90,
+      width: 222,
       disableColumnMenu: true,
       renderCell: (param) => {
         const currentRow: Seminar = param.row;
         return (
           <>
-            {/* <Button
+            <Button
               variant="text"
               color="primary"
               sx={{ textTransform: "none" }}
-              onClick={() => handleRowClick(currentRow.createdAt)}
+              onClick={() => {
+                setSeminarToEdit(currentRow);
+                handleOpenEditModal();
+              }}
             >
-              Go to daily
-            </Button> */}
+              Edit seminar
+            </Button>
             <Button
               variant="text"
               color="primary"
@@ -134,6 +143,11 @@ export const SeminaresTable = () => {
         open={openConfirmRemoveModal}
         handleClose={handleCloseConfirmRemoveModal}
         idToRemove={idToRemoveSeminar}
+      />
+      <EditModal
+        open={openEditModal}
+        handleClose={handleCloseEditModal}
+        row={seminarToEdit}
       />
     </>
   );
