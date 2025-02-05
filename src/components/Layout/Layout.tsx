@@ -1,12 +1,13 @@
-import { BrowserRouter } from "react-router";
-import { Main } from "../Main/Main";
+import { SeminaresTable } from "../SeminaresTable/SeminaresTable";
 
 export const Layout = () => {
   return (
-    <BrowserRouter>
-      <div className="page">
-        <Main />
-      </div>
-    </BrowserRouter>
+    <div className="page">
+      <main>
+        <div className="container">
+          <SeminaresTable />
+        </div>
+      </main>
+    </div>
   );
 };
