@@ -14,6 +14,15 @@ import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "../../api/queryClient";
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import {
+  DatePicker,
+  LocalizationProvider,
+  TimePicker,
+} from "@mui/x-date-pickers";
+import { convertDate } from "../../utils/convertDate";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { convertTime } from "../../utils/convertTime";
 
 interface EditModal {
   open: boolean;
@@ -24,6 +33,8 @@ interface EditModal {
 interface FormTypes {
   title: string;
   description: string;
+  date: string;
+  time: string;
 }
 
 const testRules = {
@@ -33,7 +44,8 @@ const testRules = {
 export const EditModal = ({ open, handleClose, row }: EditModal) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  console.log("row", row);
+  const [date, setDate] = useState<string>("");
+  const [convertedTime, setConvertedTime] = useState<string>(""); // YYYY-MM-DDTHH:mm
 
   const handleOnTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -47,6 +59,21 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
     const { value } = event.target;
     setValue("description", value);
     setDescription(value);
+  };
+
+  const handleOnDateChange = (newValue: dayjs.Dayjs | null) => {
+    if (newValue) {
+      setValue("date", newValue.format("DD.MM.YYYY"));
+      setDate(newValue.format("YYYY-MM-DD"));
+    }
+  };
+
+  const handleOnTimeChange = (newValue: dayjs.Dayjs | null) => {
+    if (newValue) {
+      console.log(newValue.format("HH:mm"));
+      setConvertedTime(newValue.format("YYYY-MM-DDTHH:mm"));
+      setValue("time", newValue.format("HH:mm"));
+    }
   };
 
   const editSeminarMutation = useMutation(
@@ -67,6 +94,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
   const resetForm = () => {
     setValue("title", "");
     setValue("description", "");
+    setValue("date", "");
     reset();
     clearErrors();
   };
@@ -95,10 +123,16 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
 
   useEffect(() => {
     if (row) {
+      const combinedDate = convertTime(row.time);
+
       setTitle(row.title);
       setDescription(row.description);
+      setDate(convertDate(row.date));
+      setConvertedTime(combinedDate);
       setValue("title", row.title);
       setValue("description", row.description);
+      setValue("date", row.date);
+      setValue("time", row.time);
     }
   }, [row]);
 
@@ -159,6 +193,41 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                   />
                 )}
               />
+            </FormControl>
+            <FormControl fullWidth>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Controller
+                  name="date"
+                  control={control}
+                  // rules={testRules}
+                  render={() => (
+                    <DatePicker
+                      label="Date"
+                      value={dayjs(date)}
+                      onChange={handleOnDateChange}
+                      format="DD.MM.YYYY"
+                      slots={{ textField: TextField }}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </FormControl>
+            <FormControl fullWidth>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Controller
+                  name="time"
+                  control={control}
+                  // rules={testRules}
+                  render={() => (
+                    <TimePicker
+                      label="Time"
+                      value={dayjs(convertedTime)}
+                      onChange={handleOnTimeChange}
+                      // format="HH:mm"
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             </FormControl>
             <Button type="submit" variant="contained">
               submit
