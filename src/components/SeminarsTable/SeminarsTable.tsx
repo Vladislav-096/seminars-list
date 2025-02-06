@@ -7,8 +7,9 @@ import { Button, Paper } from "@mui/material";
 import { ConfirmRemoveModal } from "../ConfirmRemoveModal/ConfirmRemoveModal";
 import { EditModal } from "../EditModal/EditModal";
 import { initialRowData } from "../../constants/constants";
+import { Loader } from "../Loader/Loader";
 
-export const SeminaresTable = () => {
+export const SeminarsTable = () => {
   const [seminars, setSeminars] = useState<Seminars>([]);
   const [openConfirmRemoveModal, setOpenConfirmRemoveModal] =
     useState<boolean>(false);
@@ -20,6 +21,7 @@ export const SeminaresTable = () => {
   const handleCloseConfirmRemoveModal = () => setOpenConfirmRemoveModal(false);
   const handleOpenEditModal = () => setOpenEditModal(true);
   const handleCloseEditModal = () => setOpenEditModal(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const getSeminaresQuery = useQuery(
     {
@@ -110,6 +112,21 @@ export const SeminaresTable = () => {
     setPaginationModel(newPaginationModel);
   };
 
+  const disableButtonTemporarily = () => {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 3000);
+    });
+  };
+
+  const handleRefetch = async () => {
+    setIsDisabled(true);
+    getSeminaresQuery.refetch();
+    await disableButtonTemporarily();
+    setIsDisabled(false);
+  };
+
   useEffect(() => {
     const seminarsList = getSeminaresQuery.data;
     if (seminarsList) {
@@ -118,11 +135,18 @@ export const SeminaresTable = () => {
   }, [getSeminaresQuery.data]);
 
   if (getSeminaresQuery.status === "pending") {
-    <div>Загрузочка</div>;
+    return <Loader />;
   }
 
   if (getSeminaresQuery.status === "error") {
-    <div>Ошибочка getSeminaresQuery</div>;
+    return (
+      <div>
+        <p>Server error</p>
+        <button disabled={isDisabled} onClick={handleRefetch}>
+          Try again
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -139,6 +163,7 @@ export const SeminaresTable = () => {
           onPaginationModelChange={handlePaginationModelChange}
         />
       </Paper>
+      <Loader />
       <ConfirmRemoveModal
         open={openConfirmRemoveModal}
         handleClose={handleCloseConfirmRemoveModal}

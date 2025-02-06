@@ -1,11 +1,11 @@
-import { SeminaresTable } from "../SeminaresTable/SeminaresTable";
+import { SeminarsTable } from "../SeminarsTable/SeminarsTable";
 
 export const Layout = () => {
   return (
     <div className="page">
       <main>
         <div className="container">
-          <SeminaresTable />
+          <SeminarsTable />
         </div>
       </main>
     </div>
