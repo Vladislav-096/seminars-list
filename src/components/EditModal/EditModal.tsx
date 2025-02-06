@@ -26,6 +26,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { convertTime } from "../../utils/convertTime";
 import { CustomErrorAlert } from "../CustomErrorAlert/CustomErrorAlert";
 
+// Интерфейсы для пропсов модального окна и формы
 interface EditModal {
   open: boolean;
   handleClose: () => void;
@@ -40,6 +41,7 @@ interface FormTypes {
   photo: string;
 }
 
+// Правила валидации для полей формы
 const textRules = {
   required: "This field is required",
 };
@@ -63,6 +65,7 @@ const urlRules = {
 const errorTitle: string = "Failed to edit seminar";
 
 export const EditModal = ({ open, handleClose, row }: EditModal) => {
+  // Локальное состояние для управления полями формы
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<string>(""); // YYYY-MM-DD
@@ -70,6 +73,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
   const [photoUrl, setPhotoUrl] = useState<string>("");
   const [alertStatus, setAlertStatus] = useState<boolean>(false);
 
+  // Обработчики обновления состояния при изменении полей формы
   const handleOnTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setValue("title", value);
@@ -110,6 +114,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
     trigger("photo");
   };
 
+  // Мутация для отправки изменений на сервер
   const editSeminarMutation = useMutation(
     {
       mutationFn: editSeminar,
@@ -126,6 +131,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
     queryClient
   );
 
+  // Сброс формы
   const resetForm = () => {
     setValue("title", "");
     setValue("description", "");
@@ -134,6 +140,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
     clearErrors();
   };
 
+  // Инициализация формы и обработка отправки
   const {
     control,
     handleSubmit,
@@ -156,6 +163,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
     resetForm();
   };
 
+  // useEffect заполняет данные при открытии модального окна
   useEffect(() => {
     if (row) {
       const combinedDate = convertTime(row.time);

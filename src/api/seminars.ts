@@ -45,12 +45,12 @@ export const removeSeminar = async (id: string) => {
     });
 };
 
-interface editSeminar {
+interface EditSeminarParams {
   id: string;
   data: Partial<Seminar>;
 }
 
-export const editSeminar = async ({ id, data }: editSeminar) => {
+export const editSeminar = async ({ id, data }: EditSeminarParams) => {
   return fetch(`${API_URL}/seminars/${id}`, {
     method: "PATCH",
     headers: { "Content-type": "application/json" },
