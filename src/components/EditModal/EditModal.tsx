@@ -4,6 +4,7 @@ import {
   Button,
   Fade,
   FormControl,
+  FormHelperText,
   Modal,
   TextField,
   Typography,
@@ -35,22 +36,41 @@ interface FormTypes {
   description: string;
   date: string;
   time: string;
+  photo: string;
 }
 
-const testRules = {
-  required: "Надо заполнить",
+const textRules = {
+  required: "This field is required",
+};
+
+const dateRules = {
+  required: "This field is required",
+  pattern: {
+    value: /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.\d{4}$/,
+    message: "Please enter date in format dd.mm.yyyy",
+  },
+};
+
+const urlRules = {
+  required: "This field is required",
+  pattern: {
+    value: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/[\w\s.-]*)*\/?$/,
+    message: "Please enter a valid URL",
+  },
 };
 
 export const EditModal = ({ open, handleClose, row }: EditModal) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [date, setDate] = useState<string>("");
+  const [date, setDate] = useState<string>(""); // YYYY-MM-DD
   const [convertedTime, setConvertedTime] = useState<string>(""); // YYYY-MM-DDTHH:mm
+  const [photoUrl, setPhotoUrl] = useState<string>("");
 
   const handleOnTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setValue("title", value);
     setTitle(value);
+    trigger("title");
   };
 
   const handleOnDescriptionChange = (
@@ -59,12 +79,14 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
     const { value } = event.target;
     setValue("description", value);
     setDescription(value);
+    trigger("description");
   };
 
   const handleOnDateChange = (newValue: dayjs.Dayjs | null) => {
     if (newValue) {
       setValue("date", newValue.format("DD.MM.YYYY"));
       setDate(newValue.format("YYYY-MM-DD"));
+      trigger("date");
     }
   };
 
@@ -73,7 +95,15 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
       console.log(newValue.format("HH:mm"));
       setConvertedTime(newValue.format("YYYY-MM-DDTHH:mm"));
       setValue("time", newValue.format("HH:mm"));
+      trigger("time");
     }
+  };
+
+  const handleOnPhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setValue("photo", value);
+    setPhotoUrl(value);
+    trigger("photo");
   };
 
   const editSeminarMutation = useMutation(
@@ -106,7 +136,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
     reset,
     clearErrors,
     setValue,
-    // trigger,
+    trigger,
   } = useForm<FormTypes>();
 
   const onSubmit = (formData: FormTypes) => {
@@ -129,10 +159,12 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
       setDescription(row.description);
       setDate(convertDate(row.date));
       setConvertedTime(combinedDate);
+      setPhotoUrl(row.photo);
       setValue("title", row.title);
       setValue("description", row.description);
       setValue("date", row.date);
       setValue("time", row.time);
+      setValue("photo", row.photo);
     }
   }, [row]);
 
@@ -166,7 +198,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
               <Controller
                 name="title"
                 control={control}
-                rules={testRules}
+                rules={textRules}
                 render={() => (
                   <TextField
                     value={title}
@@ -182,7 +214,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
               <Controller
                 name="description"
                 control={control}
-                rules={testRules}
+                rules={textRules}
                 render={() => (
                   <TextField
                     value={description}
@@ -194,12 +226,12 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                 )}
               />
             </FormControl>
-            <FormControl fullWidth>
+            <FormControl error={errors.date ? true : false} fullWidth>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Controller
                   name="date"
                   control={control}
-                  // rules={testRules}
+                  rules={dateRules}
                   render={() => (
                     <DatePicker
                       label="Date"
@@ -211,13 +243,16 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                   )}
                 />
               </LocalizationProvider>
+              {errors.date && (
+                <FormHelperText>{errors.date.message}</FormHelperText>
+              )}
             </FormControl>
-            <FormControl fullWidth>
+            <FormControl error={errors.time ? true : false} fullWidth>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Controller
                   name="time"
                   control={control}
-                  // rules={testRules}
+                  rules={textRules}
                   render={() => (
                     <TimePicker
                       label="Time"
@@ -228,6 +263,25 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                   )}
                 />
               </LocalizationProvider>
+              {errors.time && (
+                <FormHelperText>{errors.time.message}</FormHelperText>
+              )}
+            </FormControl>
+            <FormControl fullWidth>
+              <Controller
+                name="photo"
+                control={control}
+                rules={urlRules}
+                render={() => (
+                  <TextField
+                    value={photoUrl}
+                    onChange={handleOnPhotoChange}
+                    error={errors.photo ? true : false}
+                    helperText={errors.photo?.message}
+                    label="Photo URL"
+                  />
+                )}
+              />
             </FormControl>
             <Button type="submit" variant="contained">
               submit
