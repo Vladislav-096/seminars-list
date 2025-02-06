@@ -116,7 +116,7 @@ export const SeminarsTable = () => {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         resolve();
-      }, 3000);
+      }, 2000);
     });
   };
 
@@ -141,7 +141,10 @@ export const SeminarsTable = () => {
   if (getSeminaresQuery.status === "error") {
     return (
       <div>
-        <p>Server error</p>
+        <p>
+          <span>Server error: </span>
+          <span>{getSeminaresQuery.error.message}</span>
+        </p>
         <button disabled={isDisabled} onClick={handleRefetch}>
           Try again
         </button>
@@ -163,7 +166,6 @@ export const SeminarsTable = () => {
           onPaginationModelChange={handlePaginationModelChange}
         />
       </Paper>
-      <Loader />
       <ConfirmRemoveModal
         open={openConfirmRemoveModal}
         handleClose={handleCloseConfirmRemoveModal}

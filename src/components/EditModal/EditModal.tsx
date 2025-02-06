@@ -24,6 +24,7 @@ import {
 import { convertDate } from "../../utils/convertDate";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { convertTime } from "../../utils/convertTime";
+import { CustomErrorAlert } from "../CustomErrorAlert/CustomErrorAlert";
 
 interface EditModal {
   open: boolean;
@@ -59,12 +60,15 @@ const urlRules = {
   },
 };
 
+const errorTitle: string = "Failed to edit seminar";
+
 export const EditModal = ({ open, handleClose, row }: EditModal) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<string>(""); // YYYY-MM-DD
   const [convertedTime, setConvertedTime] = useState<string>(""); // YYYY-MM-DDTHH:mm
   const [photoUrl, setPhotoUrl] = useState<string>("");
+  const [alertStatus, setAlertStatus] = useState<boolean>(false);
 
   const handleOnTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -116,6 +120,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
       },
       onError(err) {
         console.log("editSeminarMutation error", err);
+        setAlertStatus(true);
       },
     },
     queryClient
@@ -169,126 +174,133 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
   }, [row]);
 
   return (
-    <Modal
-      open={open}
-      onClose={() => {
-        resetForm();
-        handleClose();
-      }}
-      aria-labelledby="modal-modal-title"
-      slots={{ backdrop: Backdrop }}
-      slotProps={{
-        backdrop: {
-          timeout: 200,
-        },
-      }}
-    >
-      <Fade in={open}>
-        <Box sx={modalContentStyles}>
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            sx={{ fontFamily: '"Play"', color: "#f0f6fc" }}
-          >
-            Edit seminar
-          </Typography>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl fullWidth>
-              <Controller
-                name="title"
-                control={control}
-                rules={textRules}
-                render={() => (
-                  <TextField
-                    value={title}
-                    onChange={handleOnTitleChange}
-                    error={errors.title ? true : false}
-                    helperText={errors.title?.message}
-                    label="Title"
-                  />
-                )}
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <Controller
-                name="description"
-                control={control}
-                rules={textRules}
-                render={() => (
-                  <TextField
-                    value={description}
-                    onChange={handleOnDescriptionChange}
-                    error={errors.description ? true : false}
-                    helperText={errors.description?.message}
-                    label="Description"
-                  />
-                )}
-              />
-            </FormControl>
-            <FormControl error={errors.date ? true : false} fullWidth>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <>
+      <Modal
+        open={open}
+        onClose={() => {
+          resetForm();
+          handleClose();
+        }}
+        aria-labelledby="modal-modal-title"
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            timeout: 200,
+          },
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={modalContentStyles}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontFamily: '"Play"', color: "#f0f6fc" }}
+            >
+              Edit seminar
+            </Typography>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <FormControl fullWidth>
                 <Controller
-                  name="date"
-                  control={control}
-                  rules={dateRules}
-                  render={() => (
-                    <DatePicker
-                      label="Date"
-                      value={dayjs(date)}
-                      onChange={handleOnDateChange}
-                      format="DD.MM.YYYY"
-                      slots={{ textField: TextField }}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-              {errors.date && (
-                <FormHelperText>{errors.date.message}</FormHelperText>
-              )}
-            </FormControl>
-            <FormControl error={errors.time ? true : false} fullWidth>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Controller
-                  name="time"
+                  name="title"
                   control={control}
                   rules={textRules}
                   render={() => (
-                    <TimePicker
-                      label="Time"
-                      value={dayjs(convertedTime)}
-                      onChange={handleOnTimeChange}
-                      // format="HH:mm"
+                    <TextField
+                      value={title}
+                      onChange={handleOnTitleChange}
+                      error={errors.title ? true : false}
+                      helperText={errors.title?.message}
+                      label="Title"
                     />
                   )}
                 />
-              </LocalizationProvider>
-              {errors.time && (
-                <FormHelperText>{errors.time.message}</FormHelperText>
-              )}
-            </FormControl>
-            <FormControl fullWidth>
-              <Controller
-                name="photo"
-                control={control}
-                rules={urlRules}
-                render={() => (
-                  <TextField
-                    value={photoUrl}
-                    onChange={handleOnPhotoChange}
-                    error={errors.photo ? true : false}
-                    helperText={errors.photo?.message}
-                    label="Photo URL"
+              </FormControl>
+              <FormControl fullWidth>
+                <Controller
+                  name="description"
+                  control={control}
+                  rules={textRules}
+                  render={() => (
+                    <TextField
+                      value={description}
+                      onChange={handleOnDescriptionChange}
+                      error={errors.description ? true : false}
+                      helperText={errors.description?.message}
+                      label="Description"
+                    />
+                  )}
+                />
+              </FormControl>
+              <FormControl error={errors.date ? true : false} fullWidth>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <Controller
+                    name="date"
+                    control={control}
+                    rules={dateRules}
+                    render={() => (
+                      <DatePicker
+                        label="Date"
+                        value={dayjs(date)}
+                        onChange={handleOnDateChange}
+                        format="DD.MM.YYYY"
+                        slots={{ textField: TextField }}
+                      />
+                    )}
                   />
+                </LocalizationProvider>
+                {errors.date && (
+                  <FormHelperText>{errors.date.message}</FormHelperText>
                 )}
-              />
-            </FormControl>
-            <Button type="submit" variant="contained">
-              submit
-            </Button>
-          </form>
-        </Box>
-      </Fade>
-    </Modal>
+              </FormControl>
+              <FormControl error={errors.time ? true : false} fullWidth>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <Controller
+                    name="time"
+                    control={control}
+                    rules={textRules}
+                    render={() => (
+                      <TimePicker
+                        label="Time"
+                        value={dayjs(convertedTime)}
+                        onChange={handleOnTimeChange}
+                        // format="HH:mm"
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+                {errors.time && (
+                  <FormHelperText>{errors.time.message}</FormHelperText>
+                )}
+              </FormControl>
+              <FormControl fullWidth>
+                <Controller
+                  name="photo"
+                  control={control}
+                  rules={urlRules}
+                  render={() => (
+                    <TextField
+                      value={photoUrl}
+                      onChange={handleOnPhotoChange}
+                      error={errors.photo ? true : false}
+                      helperText={errors.photo?.message}
+                      label="Photo URL"
+                    />
+                  )}
+                />
+              </FormControl>
+              <Button type="submit" variant="contained">
+                submit
+              </Button>
+            </form>
+          </Box>
+        </Fade>
+      </Modal>
+      <CustomErrorAlert
+        alertStatus={alertStatus}
+        setAlertStatus={setAlertStatus}
+        title={errorTitle}
+      />
+    </>
   );
 };

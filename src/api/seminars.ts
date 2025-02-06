@@ -21,7 +21,7 @@ const SeminarsSchema = z.array(SeminarSchema);
 export type Seminars = z.infer<typeof SeminarsSchema>;
 
 export const getSeminares = async () => {
-  return fetch(`${API_URL}/seminar`, {
+  return fetch(`${API_URL}/seminars`, {
     method: "GET",
   })
     .then(validateResponse)
