@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { editSeminar, Seminar } from "../../api/seminars";
-import { modalContentStyles } from "../../constants/constants";
+import { modalContentStyles, textFieldStyle } from "../../constants/constants";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "../../api/queryClient";
@@ -203,12 +203,16 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
               id="modal-modal-title"
               variant="h6"
               component="h2"
-              sx={{ fontFamily: '"Play"', color: "#f0f6fc" }}
+              sx={{
+                marginBottom: "20px",
+                fontFamily: '"Play"',
+                color: "#f0f6fc",
+              }}
             >
               Edit seminar
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <FormControl fullWidth>
+              <FormControl sx={{ marginBottom: "20px" }} fullWidth>
                 <Controller
                   name="title"
                   control={control}
@@ -220,11 +224,12 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                       error={errors.title ? true : false}
                       helperText={errors.title?.message}
                       label="Title"
+                      sx={textFieldStyle}
                     />
                   )}
                 />
               </FormControl>
-              <FormControl fullWidth>
+              <FormControl sx={{ marginBottom: "20px" }} fullWidth>
                 <Controller
                   name="description"
                   control={control}
@@ -236,11 +241,16 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                       error={errors.description ? true : false}
                       helperText={errors.description?.message}
                       label="Description"
+                      sx={textFieldStyle}
                     />
                   )}
                 />
               </FormControl>
-              <FormControl error={errors.date ? true : false} fullWidth>
+              <FormControl
+                sx={{ marginBottom: "20px" }}
+                error={errors.date ? true : false}
+                fullWidth
+              >
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <Controller
                     name="date"
@@ -253,6 +263,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                         onChange={handleOnDateChange}
                         format="DD.MM.YYYY"
                         slots={{ textField: TextField }}
+                        sx={textFieldStyle}
                       />
                     )}
                   />
@@ -261,7 +272,11 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                   <FormHelperText>{errors.date.message}</FormHelperText>
                 )}
               </FormControl>
-              <FormControl error={errors.time ? true : false} fullWidth>
+              <FormControl
+                sx={{ marginBottom: "20px" }}
+                error={errors.time ? true : false}
+                fullWidth
+              >
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <Controller
                     name="time"
@@ -273,6 +288,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                         value={dayjs(convertedTime)}
                         onChange={handleOnTimeChange}
                         // format="HH:mm"
+                        sx={textFieldStyle}
                       />
                     )}
                   />
@@ -281,7 +297,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                   <FormHelperText>{errors.time.message}</FormHelperText>
                 )}
               </FormControl>
-              <FormControl fullWidth>
+              <FormControl sx={{ marginBottom: "20px" }} fullWidth>
                 <Controller
                   name="photo"
                   control={control}
@@ -293,6 +309,7 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
                       error={errors.photo ? true : false}
                       helperText={errors.photo?.message}
                       label="Photo URL"
+                      sx={textFieldStyle}
                     />
                   )}
                 />

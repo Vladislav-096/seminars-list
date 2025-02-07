@@ -4,9 +4,11 @@ export const Layout = () => {
   return (
     <div className="page">
       <main>
-        <div className="container">
-          <SeminarsTable />
-        </div>
+        <section style={{paddingTop: "20px"}}>
+          <div className="container">
+            <SeminarsTable />
+          </div>
+        </section>
       </main>
     </div>
   );

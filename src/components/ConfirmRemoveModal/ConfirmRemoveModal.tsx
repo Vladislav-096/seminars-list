@@ -64,11 +64,22 @@ export const ConfirmRemoveModal = ({
               id="modal-modal-title"
               variant="h6"
               component="h2"
-              sx={{ fontFamily: '"Play"', color: "#f0f6fc" }}
+              sx={{
+                marginBottom: "10px",
+                fontFamily: '"Play"',
+                color: "#f0f6fc",
+              }}
             >
               Are you sure you'd like to remove the seminar?
             </Typography>
-            <Stack spacing={2} direction="row">
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <Button
                 onClick={() => {
                   removeSeminarMutation.mutate(idToRemove);

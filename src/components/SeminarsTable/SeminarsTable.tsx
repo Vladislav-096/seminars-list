@@ -3,7 +3,7 @@ import { queryClient } from "../../api/queryClient";
 import { getSeminares, Seminar, Seminars } from "../../api/seminars";
 import { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { ConfirmRemoveModal } from "../ConfirmRemoveModal/ConfirmRemoveModal";
 import { EditModal } from "../EditModal/EditModal";
 import { initialRowData } from "../../constants/constants";
@@ -168,15 +168,31 @@ export const SeminarsTable = () => {
 
   if (getSeminaresQuery.status === "error") {
     return (
-      <div>
-        <p>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <Typography
+          sx={{
+            marginBottom: "10px",
+          }}
+          variant="h4"
+        >
           <span>Server error: </span>
           <span>{getSeminaresQuery.error.message}</span>
-        </p>
-        <button disabled={isDisabled} onClick={handleRefetch}>
+        </Typography>
+        <Button
+          variant="contained"
+          disabled={isDisabled}
+          onClick={handleRefetch}
+        >
           Try again
-        </button>
-      </div>
+        </Button>
+      </Box>
     );
   }
 
