@@ -27,9 +27,8 @@ export const getSeminares = async () => {
     .then(validateResponse)
     .then((res) => res.json())
     .then((data) => SeminarsSchema.parse(data))
-    .catch((err) => {
-      console.log("getSeminares", err);
-      throw err;
+    .catch(() => {
+      throw new Error("Failed to get seminar");
     });
 };
 
@@ -39,9 +38,8 @@ export const removeSeminar = async (id: string) => {
     headers: { "Content-type": "application/json" },
   })
     .then(validateResponse)
-    .catch((err) => {
-      console.log("removeSeminar function error", err);
-      throw err;
+    .catch(() => {
+      throw new Error("Failed to remove seminar");
     });
 };
 
@@ -57,8 +55,7 @@ export const editSeminar = async ({ id, data }: EditSeminarParams) => {
     body: JSON.stringify(data),
   })
     .then(validateResponse)
-    .catch((err) => {
-      console.log("editSeminar function error", err);
-      throw err;
+    .catch(() => {
+      throw new Error("Failed to edit seminar");
     });
 };

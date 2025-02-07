@@ -21,10 +21,9 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import { convertDate } from "../../utils/convertDate";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { convertTime } from "../../utils/convertTime";
 import { CustomErrorAlert } from "../CustomErrorAlert/CustomErrorAlert";
+import { convertDate, convertTime } from "../../utils/dataTimeConvert";
 
 // Интерфейсы для пропсов модального окна и формы
 interface EditModal {
@@ -100,7 +99,6 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
 
   const handleOnTimeChange = (newValue: dayjs.Dayjs | null) => {
     if (newValue) {
-      console.log(newValue.format("HH:mm"));
       setConvertedTime(newValue.format("YYYY-MM-DDTHH:mm"));
       setValue("time", newValue.format("HH:mm"));
       trigger("time");
@@ -119,12 +117,10 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
     {
       mutationFn: editSeminar,
       onSuccess() {
-        console.log("editSeminarMutation success");
         queryClient.invalidateQueries({ queryKey: ["seminars"] });
         handleClose();
       },
-      onError(err) {
-        console.log("editSeminarMutation error", err);
+      onError() {
         setAlertStatus(true);
       },
     },
@@ -152,8 +148,6 @@ export const EditModal = ({ open, handleClose, row }: EditModal) => {
   } = useForm<FormTypes>();
 
   const onSubmit = (formData: FormTypes) => {
-    console.log("formData", formData);
-
     const formattedData = {
       id: row.id,
       data: formData,
